@@ -790,7 +790,7 @@ static lua_mapgen::filter* luaW_push_mgfilter(lua_State *L, T&&... params)
 /**
  * Create a filter.
 */
-int intf_terainfilter_create(lua_State *L)
+int intf_terrainfilter_create(lua_State *L)
 {
 	try {
 		int res_index = 0;
@@ -816,7 +816,7 @@ int intf_terainfilter_create(lua_State *L)
  * - Arg 2: string containing the name of the property.
  * - Ret 1: something containing the attribute.
  */
-static int impl_terainfilter_get(lua_State *L)
+static int impl_terrainfilter_get(lua_State *L)
 {
 	lua_mapgen::filter& f = luaW_check_mgfilter(L, 1);
 	UNUSED(f);
@@ -829,7 +829,7 @@ static int impl_terainfilter_get(lua_State *L)
  * - Arg 2: string containing the name of the property.
  * - Arg 3: something containing the attribute.
  */
-static int impl_terainfilter_set(lua_State *L)
+static int impl_terrainfilter_set(lua_State *L)
 {
 	lua_mapgen::filter& f = luaW_check_mgfilter(L, 1);
 	UNUSED(f);
@@ -852,7 +852,7 @@ static int intf_clearcache(lua_State *L)
 /**
  * Destroys a map object before it is collected (__gc metamethod).
  */
-static int impl_terainfilter_collect(lua_State *L)
+static int impl_terrainfilter_collect(lua_State *L)
 {
 	lua_mapgen::filter& f = luaW_check_mgfilter(L, 1);
 	f.~filter();
@@ -868,15 +868,15 @@ namespace lua_terrainfilter {
 		cmd_out << "Adding terrainmamap metatable...\n";
 
 		luaL_newmetatable(L, terrinfilterKey);
-		lua_pushcfunction(L, impl_terainfilter_collect);
+		lua_pushcfunction(L, impl_terrainfilter_collect);
 		lua_setfield(L, -2, "__gc");
-		lua_pushcfunction(L, impl_terainfilter_get);
+		lua_pushcfunction(L, impl_terrainfilter_get);
 		lua_setfield(L, -2, "__index");
-		lua_pushcfunction(L, impl_terainfilter_set);
+		lua_pushcfunction(L, impl_terrainfilter_set);
 		lua_setfield(L, -2, "__newindex");
 		lua_pushstring(L, "terrain_filter");
 		lua_setfield(L, -2, "__metatable");
-		// terainmap methods
+		// terrainmap methods
 		lua_pushcfunction(L, intf_clearcache);
 		lua_setfield(L, -2, "clear_cache");
 
