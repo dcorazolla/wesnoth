@@ -96,6 +96,63 @@ static int intf_compare_versions(lua_State* L)
 }
 
 /**
+ * Decomposes a version into its component parts
+ */
+static int intf_decompose_version(lua_State* L) {
+	version_info vers(luaL_checkstring(L, 1));
+	lua_createtable(L, vers.components().size(), vers.special_version_separator() ? 5 : 3);
+	lua_pushinteger(L, vers.major_version());
+	lua_setfield(L, -2, "major");
+	lua_pushinteger(L, vers.minor_version());
+	lua_setfield(L, -2, "minor");
+	lua_pushinteger(L, vers.revision_level());
+	lua_setfield(L, -2, "revision");
+	if(char sep = vers.special_version_separator()) {
+		lua_pushlstring(L, &sep, 1);
+		lua_setfield(L, -2, "sep");
+		std::string special = vers.special_version();
+		lua_pushlstring(L, special.c_str(), special.size());
+		lua_setfield(L, -2, "special");
+	}
+	int i = 0;
+	for(int n : vers.components()) {
+		lua_pushinteger(L, n);
+		lua_seti(L, -2, ++i);
+	}
+	return 1;
+}
+
+/**
+ * Builds a version string from its component parts
+ */
+static int intf_make_version(lua_State* L) {
+	int major = luaL_checkinteger(L, 1), minor = luaL_checkinteger(L, 2), rev = luaL_checkinteger(L, 3);
+	std::string sep, special;
+	if(!lua_isnoneornil(L, 4)) {
+		special = luaL_checkstring(L, 4);
+		if(!special.empty() && std::isalpha(special[0])) {
+			sep.push_back('+');
+		} else {
+			sep.push_back(special[0]);
+			special = special.substr(1);
+		}
+	} else {
+		sep.push_back(0);
+	}
+	version_info vers(major, minor, rev, sep[0], special);
+	lua_push(L, vers.str());
+	return 1;
+}
+
+/**
+ * Returns the current Wesnoth version
+ */
+static int intf_current_version(lua_State* L) {
+	lua_push(L, game_config::wesnoth_version.str());
+	return 1;
+}
+
+/**
  * Replacement print function -- instead of printing to std::cout, print to the command log.
  * Intended to be bound to this' command_log at registration time.
  */
@@ -433,7 +490,6 @@ lua_kernel_base::lua_kernel_base()
 	cmd_log_ << "Registering basic wesnoth API...\n";
 
 	static luaL_Reg const callbacks[] {
-		{ "compare_versions",         &intf_compare_versions         		},
 		{ "deprecated_message",       &intf_deprecated_message              },
 		{ "have_file",                &lua_fileops::intf_have_file          },
 		{ "read_file",                &lua_fileops::intf_read_file          },
@@ -494,6 +550,19 @@ lua_kernel_base::lua_kernel_base()
 	if(res != 1) {
 		cmd_log_ << "Error: Failed to initialize package repository. Falling back to less flexible C++ implementation.\n";
 	}
+	
+	cmd_log_ << "Adding version table...\n";
+	
+	static luaL_Reg const version_callbacks[] {
+		{ "compare",         &intf_compare_versions     	},
+		{ "make",            &intf_make_version		    	},
+		{ "decompose",       &intf_decompose_version    	},
+		{ "current",         &intf_current_version  		},
+		{ nullptr, nullptr }
+	};
+	lua_newtable(L);
+	luaL_setfuncs(L, version_callbacks, 0);
+	lua_setglobal(L, "versions");
 
 	// Get some callbacks for map locations
 	cmd_log_ << "Adding map table...\n";
