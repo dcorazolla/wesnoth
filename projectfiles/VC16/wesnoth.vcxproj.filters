@@ -1572,6 +1572,9 @@
     <ClCompile Include="..\..\src\scripting\lua_stringx.cpp">
       <Filter>Scripting</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\scripting\lua_mathx.cpp">
+      <Filter>Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\scripting\lua_widget.cpp">
       <Filter>Scripting</Filter>
     </ClCompile>
@@ -3073,6 +3076,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game_config_view.hpp" />
     <ClInclude Include="..\..\src\scripting\lua_stringx.hpp">
+      <Filter>Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\scripting\lua_mathx.hpp">
       <Filter>Scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\scripting\lua_widget.hpp">
