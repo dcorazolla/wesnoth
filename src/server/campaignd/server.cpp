@@ -449,6 +449,8 @@ void server::load_config()
 	}
 
 	LOG_CS << "Loaded addons metadata. " << addons_.size() << " addons found.\n";
+
+	load_tls_config(cfg_);
 }
 
 std::ostream& operator<<(std::ostream& o, const server::request& r)
