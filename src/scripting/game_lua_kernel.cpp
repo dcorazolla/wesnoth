@@ -4154,7 +4154,6 @@ game_lua_kernel::game_lua_kernel(game_state & gs, play_controller & pc, reports 
 		{ "log",                       &dispatch<&game_lua_kernel::intf_log                        >        },
 		{ "match_location",            &dispatch<&game_lua_kernel::intf_match_location             >        },
 		{ "message",                   &dispatch<&game_lua_kernel::intf_message                    >        },
-		{ "open_help",                 &dispatch<&game_lua_kernel::intf_open_help                  >        },
 		{ "print",                     &dispatch<&game_lua_kernel::intf_print                      >        },
 		{ "redraw",                    &dispatch<&game_lua_kernel::intf_redraw                     >        },
 		{ "remove_event_handler",      &dispatch<&game_lua_kernel::intf_remove_event               >        },
@@ -4243,6 +4242,12 @@ game_lua_kernel::game_lua_kernel(game_state & gs, play_controller & pc, reports 
 	lua_getglobal(L, "wml");
 	lua_pushcfunction(L, &lua_common::intf_tovconfig);
 	lua_setfield(L, -2, "tovconfig");
+	lua_pop(L, 1);
+
+	// Add open_help to the GUI module
+	lua_getglobal(L, "gui");
+	lua_pushcfunction(L, &dispatch<&game_lua_kernel::intf_open_help>);
+	lua_setfield(L, -2, "open_help");
 	lua_pop(L, 1);
 
 	// Create the units module
