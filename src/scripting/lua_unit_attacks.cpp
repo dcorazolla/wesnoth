@@ -391,7 +391,7 @@ namespace lua_units {
 		lua_setfield(L, -2, "matches");
 
 		// Add create_attack
-		luaW_getglobal(L, "wesnoth");
+		luaW_getglobal(L, "wesnoth", "units");
 		lua_pushcfunction(L, intf_create_attack);
 		lua_setfield(L, -2, "create_weapon");
 		lua_pop(L, 1);
